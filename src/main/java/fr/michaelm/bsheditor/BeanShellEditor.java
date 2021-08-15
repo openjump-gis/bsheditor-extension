@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import bsh.EvalError;
 import buoy.event.*;
 import buoy.widget.*;
+import com.vividsolutions.jump.I18N;
 import org.syntax.jedit.JEditTextArea;
 import org.syntax.jedit.SyntaxStyle;
 import org.syntax.jedit.TextAreaDefaults;
@@ -61,6 +62,8 @@ public class BeanShellEditor extends BFrame {
     * editor is run.
     */
     private Interpreter interpreter = new Interpreter();
+
+    private I18N i18n = I18N.getInstance("fr.michaelm.bsheditor");
     
     final private Logger log = Logger.getLogger("BshEditor");
     private StreamHandler outputStreamHandler;
@@ -78,8 +81,7 @@ public class BeanShellEditor extends BFrame {
     * Get the default locale of the jvm
     * This value can be overloaded by -I18N argument of the main or constructor
     */
-    final private Locale locale;
-    final private ResourceBundle i18n;
+    //final private Locale locale;
 
    
    /**
@@ -201,8 +203,8 @@ public class BeanShellEditor extends BFrame {
         super("BeanShell Editor");
         addEventLink(WindowClosingEvent.class, this, "exit");
         addEventLink(WindowResizedEvent.class, this, "resize");
-        locale = loc==null?Locale.getDefault():loc;
-        i18n = ResourceBundle.getBundle("BeanShellEditor_i18n", locale);
+        //locale = loc==null?Locale.getDefault():loc;
+        //i18n = ResourceBundle.getBundle("BeanShellEditor_i18n", locale);
         initUI();
         initProperties();
         pack();
@@ -232,8 +234,8 @@ public class BeanShellEditor extends BFrame {
         super("BeanShell Editor");
         addEventLink(WindowClosingEvent.class, this, "exit");
         addEventLink(WindowResizedEvent.class, this, "resize");
-        locale = loc==null?Locale.getDefault():loc;
-        i18n = ResourceBundle.getBundle("BeanShellEditor_i18n", locale);
+        //locale = loc==null?Locale.getDefault():loc;
+        //i18n = ResourceBundle.getBundle("BeanShellEditor_i18n", locale);
         initUI();
         initProperties();
         pack();
@@ -264,49 +266,49 @@ public class BeanShellEditor extends BFrame {
     private void initUI() {
         // MENUBAR ELEMENTS INITIALIZATION
         menuBar = new BMenuBar();
-            fileMenu = new BMenu(i18n.getString("menu.file"));
-                newScriptMenuItem = new BMenuItem(i18n.getString("menu.file.new"), new Shortcut('N', Shortcut.CTRL_MASK));
+            fileMenu = new BMenu(i18n.get("menu.file"));
+                newScriptMenuItem = new BMenuItem(i18n.get("menu.file.new"), new Shortcut('N', Shortcut.CTRL_MASK));
                     fileMenu.add(newScriptMenuItem);
                     newScriptMenuItem.addEventLink(CommandEvent.class, this, "newScript");
-                openScriptMenuItem = new BMenuItem(i18n.getString("menu.file.open"), new Shortcut('O', Shortcut.CTRL_MASK));
+                openScriptMenuItem = new BMenuItem(i18n.get("menu.file.open"), new Shortcut('O', Shortcut.CTRL_MASK));
                     fileMenu.add(openScriptMenuItem);
                     openScriptMenuItem.addEventLink(CommandEvent.class, this, "open");
-                saveScriptMenuItem = new BMenuItem(i18n.getString("menu.file.save"), new Shortcut('S', Shortcut.CTRL_MASK));
+                saveScriptMenuItem = new BMenuItem(i18n.get("menu.file.save"), new Shortcut('S', Shortcut.CTRL_MASK));
                     fileMenu.add(saveScriptMenuItem);
                     saveScriptMenuItem.addEventLink(CommandEvent.class, this, "save");
-                saveScriptAsMenuItem = new BMenuItem(i18n.getString("menu.file.saveas"),
+                saveScriptAsMenuItem = new BMenuItem(i18n.get("menu.file.saveas"),
                         new Shortcut('S', Shortcut.CTRL_MASK|Shortcut.SHIFT_MASK));
                     fileMenu.add(saveScriptAsMenuItem);
                     saveScriptAsMenuItem.addEventLink(CommandEvent.class, this, "saveAs");
-            optionMenu = new BMenu(i18n.getString("menu.options"));
-                chooseScriptsFolder = new BMenuItem(i18n.getString("menu.options.scriptfolder"));
+            optionMenu = new BMenu(i18n.get("menu.options"));
+                chooseScriptsFolder = new BMenuItem(i18n.get("menu.options.scriptfolder"));
                     scriptsFolder = new File(".");
                     optionMenu.add(chooseScriptsFolder);
                     chooseScriptsFolder.addEventLink(CommandEvent.class, this, "chooseScriptsFolder");
-                chooseJarsFolder = new BMenuItem(i18n.getString("menu.options.extlib"));
+                chooseJarsFolder = new BMenuItem(i18n.get("menu.options.extlib"));
                     jarsFolder = new File(".");
                     //jarFiles = new TreeSet();
                     jarFileMap = new HashMap<>();
                     //importsSet = new TreeSet();
                     optionMenu.add(chooseJarsFolder);
                     chooseJarsFolder.addEventLink(CommandEvent.class, this, "changeJarsFolder");
-                chooseStartFile = new BMenuItem(i18n.getString("menu.options.startingscript"));
+                chooseStartFile = new BMenuItem(i18n.get("menu.options.startingscript"));
                     startFile = new File("start.bsh");
                     optionMenu.add(chooseStartFile);
                     chooseStartFile.addEventLink(CommandEvent.class, this, "chooseStartFile");
                 startFileCBMI = new BCheckBoxMenuItem();
-                    startFileCBMI.setText(i18n.getString("menu.options.startingscriptalways"));
+                    startFileCBMI.setText(i18n.get("menu.options.startingscriptalways"));
                     startFileCBMI.setState(true);
                     optionMenu.add(startFileCBMI);
                     startFileCBMI.addEventLink(CommandEvent.class, this, "changeAlwaysStartFile");
                 verboseCBMI = new BCheckBoxMenuItem();
-                    verboseCBMI.setText(i18n.getString("menu.options.verboseoutput"));
+                    verboseCBMI.setText(i18n.get("menu.options.verboseoutput"));
                     optionMenu.add(verboseCBMI);
                     verboseCBMI.addEventLink(CommandEvent.class, this, "changeVerbose");
-            helpMenu = new BMenu(i18n.getString("menu.help"));
-                infoMenuItem = new BMenuItem(i18n.getString("menu.help.help"));
+            helpMenu = new BMenu(i18n.get("menu.help"));
+                infoMenuItem = new BMenuItem(i18n.get("menu.help.help"));
                     helpMenu.add(infoMenuItem);
-                helpMenuItem = new BMenuItem(i18n.getString("menu.help.info"));
+                helpMenuItem = new BMenuItem(i18n.get("menu.help.info"));
                     helpMenu.add(helpMenuItem);
         
         menuBar.add(fileMenu);
@@ -328,11 +330,11 @@ public class BeanShellEditor extends BFrame {
             ImageIcon saveAsImageIcon = new ImageIcon(BeanShellEditor.class.getResource("images/SaveAs24.gif"));
             saveAsButton = new BButton(saveAsImageIcon);
             ImageIcon runAsImageIcon = new ImageIcon(BeanShellEditor.class.getResource("images/Run24.gif"));
-            runScriptButton = new BButton(i18n.getString("toolbar.button.run"), runAsImageIcon);
+            runScriptButton = new BButton(i18n.get("toolbar.button.run"), runAsImageIcon);
             ImageIcon clearOutputImageIcon = new ImageIcon(BeanShellEditor.class.getResource("images/edit_clear.png"));
             Image image = clearOutputImageIcon.getImage().getScaledInstance(24,24, Image.SCALE_SMOOTH);
             clearOutputButton = new BButton(new ImageIcon(image));
-            fontSizeLabel = new BLabel(i18n.getString("toolbar.fontSize"));
+            fontSizeLabel = new BLabel(i18n.get("toolbar.fontSize"));
             fontSizeChooser = new BComboBox(new Object[]{8,9,10,11,12,13,14,16,18});
             fontSizeChooser.setSelectedValue(12);
             fontSizeChooser.getComponent().setPrototypeDisplayValue(111);
@@ -374,11 +376,11 @@ public class BeanShellEditor extends BFrame {
                 //varsScrollPane.setContent(variablesList);
         
         leftTabbedPane.add(bshScriptsScrollPane,
-            "<html><b>"+i18n.getString("manager.scriptfolder")+"</b><br></html>",null,0);
+            "<html><b>"+i18n.get("manager.scriptfolder")+"</b><br></html>",null,0);
         leftTabbedPane.add(jarsScrollPane,
-            "<html><b>"+i18n.getString("manager.libraries")+"</b><br></html>",null,1);
+            "<html><b>"+i18n.get("manager.libraries")+"</b><br></html>",null,1);
         leftTabbedPane.add(varsScrollPane,
-            "<html><b>"+i18n.getString("manager.variables")+"</b><br></html>",null,2);
+            "<html><b>"+i18n.get("manager.variables")+"</b><br></html>",null,2);
         
         // MAIN PANEL ELEMENTS INITIALIZATION
         rightPanel = new BSplitPane(BSplitPane.VERTICAL);
@@ -389,7 +391,7 @@ public class BeanShellEditor extends BFrame {
             // - A LABEL CONTAINING THE LINE NUMBER FOR DEBUGGING PURPOSES
             northPanel = new BorderContainer();
             northPanel.setDefaultLayout(new LayoutInfo(LayoutInfo.NORTH, LayoutInfo.BOTH, new Insets(3,3,3,3), null));
-                scriptTitle = new BLabel(i18n.getString("editor.title.new"));
+                scriptTitle = new BLabel(i18n.get("editor.title.new"));
                 TextAreaDefaults defaults = TextAreaDefaults.getDefaults();
                 defaults.cols = 48;
                 defaults.rows = 12;
@@ -407,28 +409,28 @@ public class BeanShellEditor extends BFrame {
                     styles[Token.INVALID] = new SyntaxStyle(Color.red,false,true);
                 defaults.styles = styles;
                 jEditTextArea = new JEditTextArea(defaults);
-                jEditTextArea.setText(i18n.getString("editor.writehere"));
+                jEditTextArea.setText(i18n.get("editor.writehere"));
                 jEditTextArea.setTokenMarker(new JavaTokenMarker());
-                final BLabel caretPos = new BLabel(i18n.getString("editor.status.numbering"));
+                final BLabel caretPos = new BLabel(i18n.get("editor.status.numbering"));
                 northPanel.add(scriptTitle, BorderContainer.NORTH);
                 northPanel.add(new AWTWidget(jEditTextArea), BorderContainer.CENTER);
                 northPanel.add(caretPos, BorderContainer.SOUTH);
                 jEditTextArea.setFirstLine(0);
                 jEditTextArea.addCaretListener(new CaretListener(){
                     public void caretUpdate(javax.swing.event.CaretEvent e){
-                        caretPos.setText(i18n.getString("editor.status.numbering") + (jEditTextArea.getCaretLine()+1));
+                        caretPos.setText(i18n.get("editor.status.numbering") + (jEditTextArea.getCaretLine()+1));
                     }
                 });
 
             southPanel = new BorderContainer();
                 southPanel.setDefaultLayout(new LayoutInfo(LayoutInfo.NORTHWEST, LayoutInfo.BOTH, new Insets(3,3,3,3), null));
                 commandLineContainer = new FormContainer(new double[]{0,1,0,0},new double[]{0});
-                commandLineLabel = new BLabel(i18n.getString("commandline.title"));
+                commandLineLabel = new BLabel(i18n.get("commandline.title"));
                 commandLine = new BTextField(32);
                     commandLine.addEventLink(KeyPressedEvent.class, this, "runCommand");
-                runCommand = new BButton(i18n.getString("commandline.button.run"));
+                runCommand = new BButton(i18n.get("commandline.button.run"));
                     runCommand.addEventLink(CommandEvent.class, this, "runCommand");
-                clearOutput = new BButton(i18n.getString("commandline.button.clearoutput"));
+                clearOutput = new BButton(i18n.get("commandline.button.clearoutput"));
                     clearOutput.addEventLink(CommandEvent.class, this, "clearOutput");
                 commandLineContainer.add(commandLineLabel,0,0);
                 commandLineContainer.add(commandLine,1,0, new LayoutInfo(LayoutInfo.WEST, LayoutInfo.HORIZONTAL, new Insets(3,3,3,3), null));

@@ -1,13 +1,12 @@
 package fr.michaelm.jump.bsheditor;
 
 import buoy.event.WindowClosingEvent;
+import com.vividsolutions.jump.I18N;
 import com.vividsolutions.jump.workbench.plugin.AbstractPlugIn;
 import com.vividsolutions.jump.workbench.plugin.PlugInContext;
 import com.vividsolutions.jump.workbench.ui.MenuNames;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import fr.michaelm.bsheditor.BeanShellEditor;
 
@@ -24,11 +23,7 @@ public class BeanShellEditorPlugIn extends AbstractPlugIn {
     }
 
     public String getName() {
-        ResourceBundle i18n = ResourceBundle.getBundle(
-                "BeanShellEditor_i18n",
-                Locale.getDefault()
-        );
-        return i18n.getString("name");
+        return I18N.getInstance("fr.michaelm.bsheditor").get("name");
     }
 
     // If an editor is already around, don't create a new one
