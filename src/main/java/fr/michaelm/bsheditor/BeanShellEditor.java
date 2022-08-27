@@ -63,7 +63,7 @@ public class BeanShellEditor extends BFrame {
     */
     private Interpreter interpreter = new Interpreter();
 
-    private I18N i18n = I18N.getInstance("fr.michaelm.bsheditor");
+    private final I18N i18n = I18N.getInstance("fr.michaelm.bsheditor");
     
     final private Logger log = Logger.getLogger("BshEditor");
     private StreamHandler outputStreamHandler;
@@ -76,13 +76,6 @@ public class BeanShellEditor extends BFrame {
             else return "\n"+record.getMessage();
         }
     };
-    
-   /**
-    * Get the default locale of the jvm
-    * This value can be overloaded by -I18N argument of the main or constructor
-    */
-    //final private Locale locale;
-
    
    /**
     * Map defining a set of initial variables
@@ -203,14 +196,11 @@ public class BeanShellEditor extends BFrame {
         super("BeanShell Editor");
         addEventLink(WindowClosingEvent.class, this, "exit");
         addEventLink(WindowResizedEvent.class, this, "resize");
-        //locale = loc==null?Locale.getDefault():loc;
-        //i18n = ResourceBundle.getBundle("BeanShellEditor_i18n", locale);
         initUI();
         initProperties();
         pack();
         setVisible(true);
         initInterpreter();
-        //startingScript();
     }
     
    /**
@@ -234,8 +224,6 @@ public class BeanShellEditor extends BFrame {
         super("BeanShell Editor");
         addEventLink(WindowClosingEvent.class, this, "exit");
         addEventLink(WindowResizedEvent.class, this, "resize");
-        //locale = loc==null?Locale.getDefault():loc;
-        //i18n = ResourceBundle.getBundle("BeanShellEditor_i18n", locale);
         initUI();
         initProperties();
         pack();
@@ -507,14 +495,14 @@ public class BeanShellEditor extends BFrame {
             interpreter.eval("void addPlugin(arg) {" + "\nbshEditor.addPlugin(arg);}");
             interpreter.setOut(out);
             interpreter.setErr(out);
-            Iterator it = bshEditorInitVariables.keySet().iterator();
+            Iterator<String> it = bshEditorInitVariables.keySet().iterator();
             while (it.hasNext()) {
-                String key = (String)it.next();
+                String key = it.next();
                 interpreter.set(key, bshEditorInitVariables.get(key));
             }
             it = bshEditorInitStatements.iterator();
             while (it.hasNext()) {
-                interpreter.eval((String)it.next());
+                interpreter.eval(it.next());
             }
             if (alwaysStartFile) {
                 startingScript();
@@ -835,7 +823,7 @@ public class BeanShellEditor extends BFrame {
                     if (path != null && bshScriptsTree.isLeafNode(path)) {
                         StringBuilder filePath = new StringBuilder(scriptsFolder.getAbsolutePath()+"/");
                         for (int i = 1 ; i < path.getPath().length ; i++) {
-                            filePath.append("/"+path.getPathComponent(i));
+                            filePath.append("/").append(path.getPathComponent(i));
                         }
                         openFile(new File(filePath.toString()));
                     }
@@ -901,20 +889,23 @@ public class BeanShellEditor extends BFrame {
         jarFileMap.clear();
         jarsContainer.removeAll();
         File[] ff = jarsFolder.listFiles();
-        for (int i = 0 ; i < ff.length ; i++) {
-            if(ff[i].getName().toUpperCase().endsWith(".JAR")) {
-                addJarFile(ff[i]);
+        if (ff != null) {
+            for (File file : ff) {
+                if (file.getName().toUpperCase().endsWith(".JAR")) {
+                    addJarFile(file);
+                }
             }
         }
         File f = new File("ext");
         if (!f.exists()) return;
         ff = f.listFiles();
-        for (int i = 0 ; i < ff.length ; i++) {
-            if(ff[i].getName().toUpperCase().endsWith(".JAR")) {
-                addJarFile(ff[i]);
+        if (ff != null) {
+            for (File file : ff) {
+                if (file.getName().toUpperCase().endsWith(".JAR")) {
+                    addJarFile(file);
+                }
             }
         }
-        //importPackages();
     }
     
     private void addJarFile(File jarFile) {
@@ -926,8 +917,7 @@ public class BeanShellEditor extends BFrame {
         item.addEventLink(CommandEvent.class, this, "insertImport");
         popup.add(item);
         Set<String> imports = new TreeSet<>();
-        try {
-            JarFile jar = new JarFile(jarFileMap.get(label.getText()));
+        try(JarFile jar = new JarFile(jarFileMap.get(label.getText()))) {
             Enumeration<JarEntry> enumeration = jar.entries();
             while (enumeration.hasMoreElements()) {
                 String name = (enumeration.nextElement()).getName();
@@ -1007,15 +997,22 @@ public class BeanShellEditor extends BFrame {
         this.dispose();
     }
     
-    private void exitJvm(){System.exit(0);}
+    private void exitJvm(){
+        System.exit(0);
+    }
     
     private void resize() {
         layoutChildren();
         jarsScrollPane.layoutChildren();
     };
     
-    public OutputStream getBshOutputStream(){return out;}
-    public StreamHandler getOutputStreamHandler(){return outputStreamHandler;}
+    public OutputStream getBshOutputStream(){
+        return out;
+    }
+
+    public StreamHandler getOutputStreamHandler(){
+        return outputStreamHandler;
+    }
     
    /**
     * Get a default logger.
@@ -1028,7 +1025,9 @@ public class BeanShellEditor extends BFrame {
     * <li>log.fine("This is a fine-level log test");</li>
     * <li>log.finer("This is a finer-level log test");</li>
     */
-    public Logger getLog() {return log;}
+    public Logger getLog() {
+        return log;
+    }
     
     private static class Output extends OutputStream {
         BTextArea textArea;
@@ -1039,11 +1038,10 @@ public class BeanShellEditor extends BFrame {
             textArea.append(String.valueOf((char) b));
         }
       
-        public void write(byte b[], int off, int len) {
+        public void write(byte[] b, int off, int len) {
             textArea.append(new String(b, off, len));
         }
         
     }
-    
     
 }
