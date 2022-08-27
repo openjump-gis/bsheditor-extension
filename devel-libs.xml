@@ -1,24 +1,21 @@
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
-  <id>distro zip</id>
+  <id>devel libs dir</id>
   <formats>
-    <format>zip</format>
+    <!-- for development purposes -->
+    <format>dir</format>
   </formats>
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
-      <!-- place extension jar in folder root to be parsed by OJ -->
-      <outputDirectory>/</outputDirectory>
-      <useTransitiveFiltering>false</useTransitiveFiltering>
-      <includes>
-        <include>${artifact}</include>
-      </includes>
-    </dependencySet>
-    <dependencySet>
-      <!-- place deps in a extension specific subfolder -->
-      <outputDirectory>/${project.build.finalName}</outputDirectory>
-      <unpack>false</unpack>
+      <!--
+        place runtime deps in target/libs/ to be avail for IDE development
+        e.g. in Eclipse compile the extension and run OJ with program arguments
+        -limit-ext-lookup false
+        -extensions-directory "${workspace_loc:<extension_project>}/target/classes"
+        -jars-directory "${workspace_loc:<extension_project>}/target/libs"
+      -->
       <scope>runtime</scope>
       <useTransitiveFiltering>true</useTransitiveFiltering>
       <useProjectArtifact>false</useProjectArtifact>

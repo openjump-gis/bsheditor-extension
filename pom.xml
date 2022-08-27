@@ -49,6 +49,23 @@
                 <descriptors>
                   <descriptor>distro-zip.xml</descriptor>
                 </descriptors>
+                <attach>false</attach>
+              </configuration>
+              <goals>
+                <goal>single</goal>
+              </goals>
+            </execution>
+            <execution>
+              <!-- fix "not covered by lifecycle configuration" Eclipse issue -->
+              <?m2e execute onConfiguration,onIncremental?>
+              <id>devel libs dir</id>
+              <phase>process-resources</phase>
+              <configuration>
+                <descriptors>
+                  <descriptor>devel-libs.xml</descriptor>
+                </descriptors>
+                <finalName>libs</finalName>
+                <attach>false</attach>
               </configuration>
               <goals>
                 <goal>single</goal>
